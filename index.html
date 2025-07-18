@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="th" class="h-full bg-green-50">
+<head>
+  <meta charset="UTF-8" />
+  <title>INTO THE FOREST Booking</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="h-full flex flex-col">
+
+  <!-- Navbar -->
+  <header class="bg-green-800 text-white p-4 flex justify-between">
+    <h1 class="text-xl font-bold">INTO THE FOREST - Booking Dashboard</h1>
+    <nav class="flex space-x-4">
+      <button onclick="showTab('bookingForm')" class="hover:underline">1. ลงบันทึกการจอง</button>
+      <button onclick="showTab('waiting')" class="hover:underline">2. รอใช้บริการ</button>
+      <button onclick="showTab('used')" class="hover:underline">3. ใช้บริการแล้ว</button>
+      <button onclick="showTab('summary')" class="hover:underline">4. สรุปทั้งหมด</button>
+    </nav>
+  </header>
+
+  <!-- Content -->
+  <main class="p-4 flex-1 overflow-auto">
+
+    <!-- Booking Form -->
+    <section id="bookingForm" class="tab hidden max-w-4xl mx-auto">
+      <h2 class="text-lg font-bold mb-4">ลงบันทึกการจอง</h2>
+      <form id="bookingFormElement" class="grid grid-cols-2 gap-4">
+        <div>
+          <label>วันที่จอง:</label>
+          <input type="date" name="bookingDate" required class="border p-1 rounded w-full">
+        </div>
+        <div>
+          <label>วันที่ใช้บริการ:</label>
+          <input type="date" name="serviceDate" required class="border p-1 rounded w-full">
+        </div>
+        <div>
+          <label>ชื่อลูกค้า:</label>
+          <input type="text" name="customerName" required class="border p-1 rounded w-full">
+        </div>
+        <div>
+          <label>บริษัท:</label>
+          <input type="text" name="company" required class="border p-1 rounded w-full">
+        </div>
+        <div>
+          <label>จำนวน:</label>
+          <input type="number" name="amount" class="border p-1 rounded w-full">
+        </div>
+        <div>
+          <label>โซนที่จอง:</label>
+          <input type="text" name="zone" class="border p-1 rounded w-full">
+        </div>
+        <div>
+          <label>ยอดเต็ม:</label>
+          <input type="number" name="totalAmount" required class="border p-1 rounded w-full">
+        </div>
+        <div>
+          <label>มัดจำแล้ว:</label>
+          <input type="number" name="deposit" required class="border p-1 rounded w-full">
+        </div>
+        <div class="col-span-2">
+          <label><input type="checkbox" name="waiting"> รอใช้บริการ</label>
+        </div>
+        <div class="col-span-2">
+          <label>เบอร์ติดต่อ:</label>
+          <input type="text" name="phone" class="border p-1 rounded w-full">
+        </div>
+        <div class="col-span-2">
+          <label>แนบไฟล์ 1:</label>
+          <input type="file" name="file1" class="block mb-1">
+          <label>แนบไฟล์ 2:</label>
+          <input type="file" name="file2">
+        </div>
+        <div class="col-span-2">
+          <label>หมายเหตุ:</label>
+          <textarea name="note" class="border p-1 rounded w-full"></textarea>
+        </div>
+        <button type="submit" class="col-span-2 bg-green-800 text-white px-4 py-2 rounded">บันทึกการจอง</button>
+      </form>
+    </section>
+
+    <!-- Waiting -->
+    <section id="waiting" class="tab hidden">
+      <h2 class="text-lg font-bold mb-4">รอใช้บริการ</h2>
+      <div class="overflow-auto">
+        <table class="min-w-full bg-white border">
+          <thead class="bg-green-700 text-white">
+            <tr>
+              <th class="border px-2 py-1">ชื่อ</th>
+              <th class="border px-2 py-1">บริษัท</th>
+              <th class="border px-2 py-1">วันที่จอง</th>
+              <th class="border px-2 py-1">วันที่ใช้บริการ</th>
+              <th class="border px-2 py-1">จำนวน</th>
+              <th class="border px-2 py-1">โซน</th>
+              <th class="border px-2 py-1">ยอดเต็ม</th>
+              <th class="border px-2 py-1">มัดจำ</th>
+              <th class="border px-2 py-1">สถานะ</th>
+              <th class="border px-2 py-1">เบอร์</th>
+              <th class="border px-2 py-1">ไฟล์</th>
+              <th class="border px-2 py-1">หมายเหตุ</th>
+              <th class="border px-2 py-1">ใช้บริการแล้ว</th>
+            </tr>
+          </thead>
+          <tbody id="waitingList"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Used -->
+    <section id="used" class="tab hidden">
+      <h2 class="text-lg font-bold mb-4">ใช้บริการแล้ว</h2>
+      <div class="overflow-auto">
+        <table class="min-w-full bg-white border">
+          <thead class="bg-green-700 text-white">
+            <tr>
+              <th class="border px-2 py-1">ชื่อ</th>
+              <th class="border px-2 py-1">บริษัท</th>
+              <th class="border px-2 py-1">วันที่จอง</th>
+              <th class="border px-2 py-1">วันที่ใช้บริการ</th>
+              <th class="border px-2 py-1">จำนวน</th>
+              <th class="border px-2 py-1">โซน</th>
+              <th class="border px-2 py-1">ยอดเต็ม</th>
+              <th class="border px-2 py-1">มัดจำ</th>
+              <th class="border px-2 py-1">สถานะ</th>
+              <th class="border px-2 py-1">เบอร์</th>
+              <th class="border px-2 py-1">ไฟล์</th>
+              <th class="border px-2 py-1">หมายเหตุ</th>
+            </tr>
+          </thead>
+          <tbody id="usedList"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Summary -->
+    <section id="summary" class="tab hidden">
+      <h2 class="text-lg font-bold mb-4">สรุปทั้งหมด</h2>
+      <div class="mb-4">
+        <label>เดือน:</label>
+        <input type="month" id="summaryMonth" class="border p-1 rounded">
+        <button onclick="renderSummary()" class="bg-green-800 text-white px-4 py-1 rounded ml-2">กรองข้อมูล</button>
+      </div>
+      <div id="companySummary" class="mb-4 p-2 border bg-green-100 rounded"></div>
+      <div class="overflow-auto">
+        <table class="min-w-full bg-white border">
+          <thead class="bg-green-700 text-white">
+            <tr>
+              <th class="border px-2 py-1">ชื่อ</th>
+              <th class="border px-2 py-1">บริษัท</th>
+              <th class="border px-2 py-1">วันที่จอง</th>
+              <th class="border px-2 py-1">วันที่ใช้บริการ</th>
+              <th class="border px-2 py-1">จำนวน</th>
+              <th class="border px-2 py-1">โซน</th>
+              <th class="border px-2 py-1">ยอดเต็ม</th>
+              <th class="border px-2 py-1">มัดจำ</th>
+              <th class="border px-2 py-1">คงเหลือจ่าย</th>
+              <th class="border px-2 py-1">สถานะ</th>
+              <th class="border px-2 py-1">เบอร์</th>
+              <th class="border px-2 py-1">ไฟล์</th>
+              <th class="border px-2 py-1">หมายเหตุ</th>
+              <th class="border px-2 py-1">การจัดการ</th>
+            </tr>
+          </thead>
+          <tbody id="summaryList"></tbody>
+        </table>
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    let waitingData = [];
+    let usedData = [];
+
+    function showTab(id) {
+      document.querySelectorAll('.tab').forEach(tab => tab.classList.add('hidden'));
+      document.getElementById(id).classList.remove('hidden');
+    }
+    showTab('bookingForm');
+
+    document.getElementById('bookingFormElement').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const formData = new FormData(this);
+      const data = Object.fromEntries(formData.entries());
+      data.waiting = formData.has('waiting');
+      data.file1 = formData.get('file1').name ? URL.createObjectURL(formData.get('file1')) : '';
+      data.file1Name = formData.get('file1').name || '';
+      data.file2 = formData.get('file2').name ? URL.createObjectURL(formData.get('file2')) : '';
+      data.file2Name = formData.get('file2').name || '';
+
+      if (data.waiting) {
+        waitingData.push(data);
+        sortData();
+        renderWaiting();
+        renderUsed();
+        renderSummary();
+        alert('บันทึกข้อมูลเรียบร้อยแล้ว');
+        this.reset();
+      } else {
+        alert('กรุณาติ๊ก รอใช้บริการก่อน');
+      }
+    });
+
+    function sortData() {
+      waitingData.sort((a, b) => new Date(a.serviceDate) - new Date(b.serviceDate));
+      usedData.sort((a, b) => new Date(a.serviceDate) - new Date(b.serviceDate));
+    }
+
+    function formatDate(d) {
+      const date = new Date(d);
+      return date.toLocaleDateString('th-TH', { day: '2-digit', month: '2-digit', year: 'numeric' });
+    }
+
+    function renderWaiting() {
+      const tbody = document.getElementById('waitingList');
+      tbody.innerHTML = '';
+      const now = new Date();
+      waitingData.forEach((data, index) => {
+        const serviceDate = new Date(data.serviceDate);
+        const diffDays = Math.ceil((serviceDate - now) / (1000 * 60 * 60 * 24));
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td class="border px-2 py-1">${data.customerName}</td>
+          <td class="border px-2 py-1">${data.company}</td>
+          <td class="border px-2 py-1">${formatDate(data.bookingDate)}</td>
+          <td class="border px-2 py-1 ${diffDays <= 3 ? 'text-red-600' : ''}">${formatDate(data.serviceDate)}</td>
+          <td class="border px-2 py-1">${data.amount}</td>
+          <td class="border px-2 py-1">${data.zone}</td>
+          <td class="border px-2 py-1">฿${Number(data.totalAmount).toLocaleString()}</td>
+          <td class="border px-2 py-1">฿${Number(data.deposit).toLocaleString()}</td>
+          <td class="border px-2 py-1 text-red-600">waiting</td>
+          <td class="border px-2 py-1">${data.phone}</td>
+          <td class="border px-2 py-1">
+            ${data.file1Name ? `<a href="${data.file1}" target="_blank">${data.file1Name}</a><br>` : ''}
+            ${data.file2Name ? `<a href="${data.file2}" target="_blank">${data.file2Name}</a>` : ''}
+          </td>
+          <td class="border px-2 py-1">${data.note}</td>
+          <td class="border px-2 py-1"><input type="checkbox" onchange="markAsUsed(${index})"></td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function markAsUsed(index) {
+      usedData.push(waitingData[index]);
+      waitingData.splice(index, 1);
+      sortData();
+      renderWaiting();
+      renderUsed();
+      renderSummary();
+    }
+
+    function renderUsed() {
+      const tbody = document.getElementById('usedList');
+      tbody.innerHTML = '';
+      const now = new Date();
+      usedData.forEach(data => {
+        const serviceDate = new Date(data.serviceDate);
+        const diffDays = Math.ceil((serviceDate - now) / (1000 * 60 * 60 * 24));
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td class="border px-2 py-1">${data.customerName}</td>
+          <td class="border px-2 py-1">${data.company}</td>
+          <td class="border px-2 py-1">${formatDate(data.bookingDate)}</td>
+          <td class="border px-2 py-1">${formatDate(data.serviceDate)}</td>
+          <td class="border px-2 py-1">${data.amount}</td>
+          <td class="border px-2 py-1">${data.zone}</td>
+          <td class="border px-2 py-1">฿${Number(data.totalAmount).toLocaleString()}</td>
+          <td class="border px-2 py-1">฿${Number(data.deposit).toLocaleString()}</td>
+          <td class="border px-2 py-1 text-green-800">used</td>
+          <td class="border px-2 py-1">${data.phone}</td>
+          <td class="border px-2 py-1">
+            ${data.file1Name ? `<a href="${data.file1}" target="_blank">${data.file1Name}</a><br>` : ''}
+            ${data.file2Name ? `<a href="${data.file2}" target="_blank">${data.file2Name}</a>` : ''}
+          </td>
+          <td class="border px-2 py-1">${data.note}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function renderSummary() {
+      const tbody = document.getElementById('summaryList');
+      const filterMonth = document.getElementById('summaryMonth').value;
+      tbody.innerHTML = '';
+      const now = new Date();
+      const companies = {};
+      [...waitingData, ...usedData].forEach((data, index) => {
+        const sDate = new Date(data.serviceDate);
+        const diffDays = Math.ceil((sDate - now) / (1000 * 60 * 60 * 24));
+        const remaining = Number(data.totalAmount) - Number(data.deposit);
+        companies[data.company] = (companies[data.company] || 0) + 1;
+        const status = waitingData.includes(data) ? 'waiting' : 'used';
+        if (filterMonth && !data.serviceDate.startsWith(filterMonth)) return;
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td class="border px-2 py-1">${data.customerName}</td>
+          <td class="border px-2 py-1">${data.company}</td>
+          <td class="border px-2 py-1">${formatDate(data.bookingDate)}</td>
+          <td class="border px-2 py-1 ${diffDays <= 3 && status === 'waiting' ? 'text-red-600' : ''}">${formatDate(data.serviceDate)}</td>
+          <td class="border px-2 py-1">${data.amount}</td>
+          <td class="border px-2 py-1">${data.zone}</td>
+          <td class="border px-2 py-1">฿${Number(data.totalAmount).toLocaleString()}</td>
+          <td class="border px-2 py-1">฿${Number(data.deposit).toLocaleString()}</td>
+          <td class="border px-2 py-1">฿${remaining.toLocaleString()}</td>
+          <td class="border px-2 py-1 ${status === 'waiting' ? 'text-red-600' : 'text-green-800'}">${status}</td>
+          <td class="border px-2 py-1">${data.phone}</td>
+          <td class="border px-2 py-1">
+            ${data.file1Name ? `<a href="${data.file1}" target="_blank">${data.file1Name}</a><br>` : ''}
+            ${data.file2Name ? `<a href="${data.file2}" target="_blank">${data.file2Name}</a>` : ''}
+          </td>
+          <td class="border px-2 py-1">${data.note}</td>
+          <td class="border px-2 py-1">
+            <button onclick="editData(${index}, '${status}')" class="text-blue-600">แก้ไข</button>
+            <button onclick="deleteData(${index}, '${status}')" class="text-red-600 ml-2">ลบ</button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+      const summaryBox = document.getElementById('companySummary');
+      summaryBox.innerHTML = '<strong>สรุปบริษัทซ้ำ:</strong><br>';
+      for (const [company, count] of Object.entries(companies)) {
+        if (count > 1) {
+          summaryBox.innerHTML += `${company}: ${count} รายการ<br>`;
+        }
+      }
+    }
+
+    function deleteData(index, status) {
+      if (confirm('ลบข้อมูลนี้ใช่หรือไม่?')) {
+        if (status === 'waiting') waitingData.splice(index, 1);
+        else usedData.splice(index, 1);
+        renderWaiting();
+        renderUsed();
+        renderSummary();
+      }
+    }
+
+    function editData(index, status) {
+      const data = status === 'waiting' ? waitingData[index] : usedData[index];
+      document.querySelector('#bookingForm input[name="bookingDate"]').value = data.bookingDate;
+      document.querySelector('#bookingForm input[name="serviceDate"]').value = data.serviceDate;
+      document.querySelector('#bookingForm input[name="customerName"]').value = data.customerName;
+      document.querySelector('#bookingForm input[name="company"]').value = data.company;
+      document.querySelector('#bookingForm input[name="amount"]').value = data.amount;
+      document.querySelector('#bookingForm input[name="zone"]').value = data.zone;
+      document.querySelector('#bookingForm input[name="totalAmount"]').value = data.totalAmount;
+      document.querySelector('#bookingForm input[name="deposit"]').value = data.deposit;
+      document.querySelector('#bookingForm input[name="phone"]').value = data.phone;
+      document.querySelector('#bookingForm textarea[name="note"]').value = data.note;
+      document.querySelector('#bookingForm input[name="waiting"]').checked = true;
+
+      if (status === 'waiting') waitingData.splice(index, 1);
+      else usedData.splice(index, 1);
+
+      showTab('bookingForm');
+    }
+
+  </script>
+
+</body>
+</html>
+
+
+
+
+
